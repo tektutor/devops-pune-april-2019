@@ -23,8 +23,8 @@
 
      - name: Generate private and public key pair
        openssh_keypair: 
-           path: /root/.ssh
-           force: True
+          path: /root/.ssh
+          force: True
 
      - name: Copy the public key under current directory
        shell: cp /root/.ssh/id_rsa.pub authorized_keys
