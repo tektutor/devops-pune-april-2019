@@ -1,13 +1,13 @@
 - name: This playbook will build custom docker ansible image
   hosts: localhost
   tasks:
-     - name: Delete all containers 
-       shell: docker rm -f $(docker ps -aq)
-       ignore_errors: yes
+#     - name: Delete all containers 
+#       shell: docker rm -f $(docker ps -aq)
+#       ignore_errors: yes
 
-     - name: Delete the custom docker image
-       shell: docker rmi -f tektutor/ansible-ubuntu
-       ignore_errors: yes
+#     - name: Delete the custom docker image
+#       shell: docker rmi -f tektutor/ansible-ubuntu
+#       ignore_errors: yes
 
      - name: Install Python package installer in Ubuntu
        when: ansible_distribution == "Ubuntu"
@@ -20,6 +20,12 @@
      - name: Install Python package installer in CentOS 
        when: ansible_distribution == "CentOS"
        yum: name=python-pip state=latest
+
+     - name: Create the maven local repo folder
+       file: path=/root/.m2 state=directory mode=0777
+
+     - name: Configure nexus credentials in maven settings
+       copy: src=settings.xml dest=/root/.m2/settings.xml
 
 #     - name: Generate private and public key pair
 #       openssh_keypair: 
