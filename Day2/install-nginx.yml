@@ -7,7 +7,7 @@
   tasks:
     - name: Install nginx web server in Ubuntu
       apt: name=nginx state=latest update_cache=yes
-      env: "{{proxy_configuration}}"
+      #env: "{{proxy_configuration}}"
 
     - name: Start the nginx server
       command: service nginx start

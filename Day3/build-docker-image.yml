@@ -1,0 +1,41 @@
+- name: This playbook will build custom docker ansible image
+  hosts: localhost
+  tasks:
+     - name: Delete all containers 
+       shell: docker rm -f $(docker ps -aq)
+       ignore_errors: yes
+
+     - name: Delete the custom docker image
+       shell: docker rmi -f tektutor/ansible-ubuntu
+       ignore_errors: yes
+
+     - name: Install Python package installer in Ubuntu
+       when: ansible_distribution == "Ubuntu"
+       apt: name=python-pip state=latest update_cache=yes
+
+     - name: Install Extra packages for Enterprise Linux (EPEL) in CentOS 
+       when: ansible_distribution == "CentOS"
+       yum: name=epel-release state=latest
+
+     - name: Install Python package installer in CentOS 
+       when: ansible_distribution == "CentOS"
+       yum: name=python-pip state=latest
+
+     - name: Generate private and public key pair
+       openssh_keypair: 
+           path: /root/.ssh
+           force: True
+
+     - name: Copy the public key under current directory
+       shell: cp /root/.ssh/id_rsa.pub authorized_keys
+
+     - name: Install docker-py python module
+       shell: pip install docker-py
+
+     - name: Build the ubuntu ansible image with JDK, Maven, Git and other tools
+       docker_image:
+          name: "tektutor/ansible-ubuntu"
+          state: build
+          dockerfile: UbuntuDockerfile
+          path: .
+          
